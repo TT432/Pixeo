@@ -1,6 +1,6 @@
 package io.github.tt432.pixeo.ui.component;
 
-import io.github.tt432.pixeo.ui.element.UIElement;
+import io.github.tt432.pixeo.ui.UIElement;
 import io.github.tt432.pixeo.util.Anchor;
 import io.github.tt432.pixeo.util.FourPoint;
 import lombok.Getter;

@@ -1,6 +1,5 @@
-package io.github.tt432.pixeo.ui.element;
+package io.github.tt432.pixeo.ui;
 
-import io.github.tt432.pixeo.ui.Canvas;
 import io.github.tt432.pixeo.ui.component.UIComponent;
 import io.github.tt432.pixeo.util.ProxyGuiEventListener;
 import lombok.Getter;
@@ -17,7 +16,7 @@ import java.util.*;
  */
 @Getter
 @RequiredArgsConstructor
-public class UIElement implements ProxyGuiEventListener {
+public final class UIElement implements ProxyGuiEventListener {
     @NotNull
     Canvas canvas;
     @Nullable
@@ -42,6 +41,10 @@ public class UIElement implements ProxyGuiEventListener {
 
         for (UIComponent value : components.values()) {
             value.beforeRender(guiGraphics);
+        }
+
+        for (UIComponent value : components.values()) {
+            value.render(guiGraphics);
         }
 
         for (UIElement child : children) {

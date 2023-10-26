@@ -1,6 +1,6 @@
 package io.github.tt432.pixeo.ui.component;
 
-import io.github.tt432.pixeo.ui.element.UIElement;
+import io.github.tt432.pixeo.ui.UIElement;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -35,6 +35,10 @@ public abstract class UIComponent implements GuiEventListener {
     }
 
     public void afterRender(GuiGraphics guiGraphics) {
+
+    }
+
+    public void render(GuiGraphics guiGraphics) {
 
     }
 }

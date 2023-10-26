@@ -1,6 +1,6 @@
 package io.github.tt432.pixeo.util.size;
 
-import io.github.tt432.pixeo.ui.element.UIElement;
+import io.github.tt432.pixeo.ui.UIElement;
 import io.github.tt432.pixeo.ui.component.SizeCalculator;
 import lombok.AllArgsConstructor;
 import org.joml.Vector2f;

@@ -1,7 +1,6 @@
 package io.github.tt432.pixeo.ui;
 
 import com.mojang.blaze3d.platform.Window;
-import io.github.tt432.pixeo.ui.element.UIElement;
 import io.github.tt432.pixeo.util.ProxyGuiEventListener;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
