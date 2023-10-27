@@ -30,10 +30,7 @@ public class CreateOnDrag extends UIComponent {
     @Override
     public boolean mouseDragged(double pMouseX, double pMouseY, int pButton, double pDragX, double pDragY) {
         if (clicked) {
-            UIElement apply = copyFactory.apply(this);
-            apply.setup();
-            apply.updateLayout();
-            apply.mouseClicked(pMouseX, pMouseY, pButton);
+            copyFactory.apply(this);
             clicked = false;
             return true;
         }

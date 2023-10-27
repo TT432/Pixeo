@@ -1,15 +1,30 @@
 package io.github.tt432.pixeo.ui.component;
 
 import io.github.tt432.pixeo.ui.UIElement;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author TT432
  */
 public abstract class UIComponent implements GuiEventListener {
     protected UIElement owner;
+
+    /**
+     * this before the list
+     */
+    @Getter
+    List<Class<? extends UIComponent>> before = new ArrayList<>();
+    /**
+     * this after the list
+     */
+    @Getter
+    List<Class<? extends UIComponent>> after = new ArrayList<>();
 
     public boolean active() {
         return true;

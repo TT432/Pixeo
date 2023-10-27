@@ -9,6 +9,10 @@ import org.joml.Vector2f;
  * @author TT432
  */
 public abstract class SizeCalculator extends UIComponent {
+    public SizeCalculator() {
+        after.add(RectTransform.class);
+    }
+
     @Override
     public void updateLayout() {
         owner.getComponent(RectTransform.class).ifPresent(rt -> rt.setSize(calculateSize(owner)));

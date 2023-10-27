@@ -3,6 +3,7 @@ package io.github.tt432.pixeo.ui;
 import io.github.tt432.pixeo.ui.component.RectTransform;
 import io.github.tt432.pixeo.ui.component.UIComponent;
 import io.github.tt432.pixeo.util.ProxyGuiComponentEventListener;
+import io.github.tt432.pixeo.util.Sorts;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.client.gui.GuiGraphics;
@@ -15,14 +16,22 @@ import java.util.*;
 /**
  * @author TT432
  */
-@Getter
 @RequiredArgsConstructor
-public final class UIElement implements  ProxyGuiComponentEventListener {
+public final class UIElement implements ProxyGuiComponentEventListener {
     @NotNull
+    @Getter
     Canvas canvas;
     @Nullable
+    @Getter
     UIElement parent;
+    @Getter
     List<UIElement> children = new ArrayList<>();
+
+    List<UIElement> addChildQueue = new ArrayList<>();
+
+    public void addChild(UIElement child) {
+        addChildQueue.add(child);
+    }
 
     Map<Class<?>, UIComponent> components = new HashMap<>();
 
@@ -33,6 +42,14 @@ public final class UIElement implements  ProxyGuiComponentEventListener {
 
     public void addComponent(UIComponent component) {
         components.put(component.getClass(), component);
+
+        List<UIComponent> sortComponents = Sorts.sortComponents(components.values());
+
+        components.clear();
+
+        for (UIComponent sortComponent : sortComponents) {
+            components.put(sortComponent.getClass(), sortComponent);
+        }
     }
 
     public boolean hover(double mouseX, double mouseY) {
@@ -49,6 +66,20 @@ public final class UIElement implements  ProxyGuiComponentEventListener {
         for (UIElement child : children) {
             child.updateLayout();
         }
+    }
+
+    public void processElementsModify() {
+        processAddChildren();
+    }
+
+    private void processAddChildren() {
+        for (UIElement element : addChildQueue) {
+            children.add(element);
+            element.parent = this;
+            element.setup();
+        }
+
+        addChildQueue.clear();
     }
 
     public void render(GuiGraphics guiGraphics) {
@@ -73,6 +104,8 @@ public final class UIElement implements  ProxyGuiComponentEventListener {
     }
 
     public void setup() {
+        processAddChildren();
+
         for (UIComponent value : components.values()) {
             value.setup(this);
         }
@@ -84,11 +117,11 @@ public final class UIElement implements  ProxyGuiComponentEventListener {
 
     @Override
     public Collection<UIComponent> components() {
-        return components.values();
+        return new ArrayList<>(components.values());
     }
 
     @Override
     public List<? extends GuiEventListener> target() {
-        return children;
+        return new ArrayList<>(children);
     }
 }

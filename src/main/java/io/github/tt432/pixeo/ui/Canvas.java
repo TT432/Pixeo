@@ -1,6 +1,7 @@
 package io.github.tt432.pixeo.ui;
 
 import com.mojang.blaze3d.platform.Window;
+import io.github.tt432.pixeo.util.ElementsSearchHandler;
 import io.github.tt432.pixeo.util.ProxyGuiEventListener;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -10,6 +11,7 @@ import org.joml.Vector2f;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author TT432
@@ -31,10 +33,20 @@ public class Canvas implements ProxyGuiEventListener {
     @Getter
     float scaleRatio;
 
+    public ElementsSearchHandler searcher() {
+        return new ElementsSearchHandler(elements);
+    }
+
     private final List<UIElement> addElementQueue = new ArrayList<>();
 
     public void addElement(UIElement element) {
         addElementQueue.add(element);
+    }
+
+    private final List<UIElement> removeElementQueue = new CopyOnWriteArrayList<>();
+
+    public void removeElement(UIElement element) {
+        removeElementQueue.add(element);
     }
 
     public void setup() {
@@ -73,8 +85,29 @@ public class Canvas implements ProxyGuiEventListener {
         addElementQueue.clear();
     }
 
-    public void updateLayout() {
+    private void processRemoveElements() {
+        for (UIElement element : removeElementQueue) {
+            if (element.parent == null) {
+                elements.remove(element);
+            } else {
+                element.parent.children.remove(element);
+            }
+        }
+
+        removeElementQueue.clear();
+    }
+
+    private void processElementsModify() {
+        processRemoveElements();
         processAddElements();
+
+        for (UIElement element : elements) {
+            element.processElementsModify();
+        }
+    }
+
+    public void updateLayout() {
+        processElementsModify();
 
         updateSize();
         calculateRatio();
@@ -97,6 +130,6 @@ public class Canvas implements ProxyGuiEventListener {
 
     @Override
     public List<? extends GuiEventListener> target() {
-        return elements;
+        return new ArrayList<>(elements);
     }
 }
