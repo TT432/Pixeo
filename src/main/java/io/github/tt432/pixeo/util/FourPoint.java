@@ -23,6 +23,11 @@ public class FourPoint {
         return new Vector4f(up, right, down, left);
     }
 
+    public boolean inside(double x, double y) {
+        return x >= left && x <= right
+                && y >= up && y <= down;
+    }
+
     public void set(float up, float down, float left, float right) {
         this.up = up;
         this.down = down;

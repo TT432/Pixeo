@@ -10,7 +10,7 @@ import org.joml.Vector2f;
  */
 public abstract class SizeCalculator extends UIComponent {
     @Override
-    public void setupLayout(UIElement owner) {
+    public void updateLayout() {
         owner.getComponent(RectTransform.class).ifPresent(rt -> rt.setSize(calculateSize(owner)));
     }
 
@@ -18,6 +18,10 @@ public abstract class SizeCalculator extends UIComponent {
 
     public static SizeCalculator constant(Vector2f size) {
         return new ConstantContentBasedSize(size);
+    }
+
+    public static SizeCalculator constant(int w, int h) {
+        return constant(new Vector2f(w, h));
     }
 
     public static SizeCalculator constantContainerBased(Vector2f size) {

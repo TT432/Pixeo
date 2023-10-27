@@ -1,7 +1,7 @@
 package io.github.tt432.pixeo.ui.component;
 
 import io.github.tt432.pixeo.ui.UIElement;
-import lombok.Getter;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 
@@ -9,8 +9,23 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
  * @author TT432
  */
 public abstract class UIComponent implements GuiEventListener {
-    @Getter
-    UIElement owner;
+    protected UIElement owner;
+
+    public boolean active() {
+        return true;
+    }
+
+    protected double mouseX() {
+        return Minecraft.getInstance().mouseHandler.xpos()
+                * Minecraft.getInstance().getWindow().getGuiScaledWidth()
+                / Minecraft.getInstance().getWindow().getScreenWidth();
+    }
+
+    protected double mouseY() {
+        return Minecraft.getInstance().mouseHandler.ypos()
+                * Minecraft.getInstance().getWindow().getGuiScaledHeight()
+                / Minecraft.getInstance().getWindow().getScreenHeight();
+    }
 
     @Override
     public void setFocused(boolean pFocused) {
@@ -22,7 +37,7 @@ public abstract class UIComponent implements GuiEventListener {
         return false;
     }
 
-    public void setupLayout(UIElement owner) {
+    public void updateLayout() {
 
     }
 
@@ -40,5 +55,9 @@ public abstract class UIComponent implements GuiEventListener {
 
     public void render(GuiGraphics guiGraphics) {
 
+    }
+
+    public UIElement getOwner() {
+        return this.owner;
     }
 }

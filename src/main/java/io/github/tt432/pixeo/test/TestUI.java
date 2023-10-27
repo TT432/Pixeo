@@ -3,11 +3,7 @@ package io.github.tt432.pixeo.test;
 import io.github.tt432.pixeo.ui.Canvas;
 import io.github.tt432.pixeo.ui.PixeoScreen;
 import io.github.tt432.pixeo.ui.UIElement;
-import io.github.tt432.pixeo.ui.component.Clip;
-import io.github.tt432.pixeo.ui.component.Draggable;
-import io.github.tt432.pixeo.ui.component.RectTransform;
-import io.github.tt432.pixeo.ui.component.SizeCalculator;
-import io.github.tt432.pixeo.ui.component.Image;
+import io.github.tt432.pixeo.ui.component.*;
 import io.github.tt432.pixeo.util.Anchor;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -39,7 +35,7 @@ public class TestUI {
             background.addComponent(new RectTransform(Anchor.CENTER_CENTER));
             background.addComponent(SizeCalculator.constant(new Vector2f(200, 200)));
             background.addComponent(new Clip());
-            canvas.getElements().add(background);
+            canvas.addElement(background);
 
             UIElement element = new UIElement(canvas);
             Image image = new Image();
@@ -49,6 +45,25 @@ public class TestUI {
             element.addComponent(SizeCalculator.constant(new Vector2f(40, 40)));
             element.addComponent(new Draggable());
             background.getChildren().add(element);
+
+            UIElement testB = new UIElement(canvas);
+            testB.addComponent(new RectTransform(Anchor.RIGHT_CENTER));
+            testB.addComponent(SizeCalculator.constant(50, 50));
+            Image image1 = new Image();
+            image1.setColor(new Vector4f(0, 1, 1, 1));
+            testB.addComponent(image1);
+            testB.addComponent(new CreateOnDrag(cod -> {
+                UIElement copied = new UIElement(canvas);
+                canvas.addElement(copied);
+                copied.addComponent(new RectTransform(Anchor.RIGHT_CENTER));
+                copied.addComponent(SizeCalculator.constant(50, 50));
+                copied.addComponent(new Draggable());
+                Image component = new Image();
+                component.setColor(new Vector4f(0, 1, 0, 1));
+                copied.addComponent(component);
+                return copied;
+            }));
+            canvas.addElement(testB);
 
             Minecraft.getInstance().setScreen(new PixeoScreen(Component.empty(), canvas));
         }

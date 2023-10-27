@@ -7,6 +7,11 @@ public class Draggable extends UIComponent {
     boolean dragging;
 
     @Override
+    public boolean active() {
+        return getOwner().hover(mouseX(), mouseY());
+    }
+
+    @Override
     public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
         dragging = true;
         return true;

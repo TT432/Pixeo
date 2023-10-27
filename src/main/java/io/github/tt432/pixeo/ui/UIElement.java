@@ -1,7 +1,8 @@
 package io.github.tt432.pixeo.ui;
 
+import io.github.tt432.pixeo.ui.component.RectTransform;
 import io.github.tt432.pixeo.ui.component.UIComponent;
-import io.github.tt432.pixeo.util.ProxyGuiEventListener;
+import io.github.tt432.pixeo.util.ProxyGuiComponentEventListener;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.client.gui.GuiGraphics;
@@ -16,7 +17,7 @@ import java.util.*;
  */
 @Getter
 @RequiredArgsConstructor
-public final class UIElement implements ProxyGuiEventListener {
+public final class UIElement implements  ProxyGuiComponentEventListener {
     @NotNull
     Canvas canvas;
     @Nullable
@@ -34,17 +35,31 @@ public final class UIElement implements ProxyGuiEventListener {
         components.put(component.getClass(), component);
     }
 
+    public boolean hover(double mouseX, double mouseY) {
+        return getComponent(RectTransform.class)
+                .map(rt -> rt.getFourPoint().inside(mouseX, mouseY))
+                .orElse(false);
+    }
+
+    public void updateLayout() {
+        for (UIComponent value : components.values()) {
+            value.updateLayout();
+        }
+
+        for (UIElement child : children) {
+            child.updateLayout();
+        }
+    }
+
     public void render(GuiGraphics guiGraphics) {
         for (UIComponent value : components.values()) {
-            value.setupLayout(this);
+            if (value.active())
+                value.beforeRender(guiGraphics);
         }
 
         for (UIComponent value : components.values()) {
-            value.beforeRender(guiGraphics);
-        }
-
-        for (UIComponent value : components.values()) {
-            value.render(guiGraphics);
+            if (value.active())
+                value.render(guiGraphics);
         }
 
         for (UIElement child : children) {
@@ -52,7 +67,8 @@ public final class UIElement implements ProxyGuiEventListener {
         }
 
         for (UIComponent value : components.values()) {
-            value.afterRender(guiGraphics);
+            if (value.active())
+                value.afterRender(guiGraphics);
         }
     }
 
@@ -67,9 +83,12 @@ public final class UIElement implements ProxyGuiEventListener {
     }
 
     @Override
+    public Collection<UIComponent> components() {
+        return components.values();
+    }
+
+    @Override
     public List<? extends GuiEventListener> target() {
-        ArrayList<GuiEventListener> result = new ArrayList<>(children);
-        result.addAll(components.values());
-        return result;
+        return children;
     }
 }

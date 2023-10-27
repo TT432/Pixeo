@@ -26,7 +26,7 @@ public class RectTransform extends UIComponent {
     FourPoint fourPoint = new FourPoint();
 
     @Override
-    public void setupLayout(UIElement owner) {
+    public void updateLayout() {
         calculateFourPoints(owner);
     }
 
