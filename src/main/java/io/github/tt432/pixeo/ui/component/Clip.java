@@ -7,7 +7,7 @@ import org.lwjgl.opengl.GL11;
 /**
  * @author TT432
  */
-public class Clip extends UIComponent{
+public class Clip extends UIComponent {
     @Override
     public void beforeRender(GuiGraphics guiGraphics) {
         GL11.glEnable(GL11.GL_SCISSOR_TEST);

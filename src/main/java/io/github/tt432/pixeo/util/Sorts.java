@@ -48,8 +48,8 @@ public class Sorts {
     }
 
     private static void topoSort(Map<Class<? extends UIComponent>, List<Class<? extends UIComponent>>> graph,
-                                Set<Class<? extends UIComponent>> visited, Deque<Class<? extends UIComponent>> stack,
-                                Class<? extends UIComponent> current) {
+                                 Set<Class<? extends UIComponent>> visited, Deque<Class<? extends UIComponent>> stack,
+                                 Class<? extends UIComponent> current) {
         visited.add(current);
 
         for (var neighbor : graph.get(current)) {

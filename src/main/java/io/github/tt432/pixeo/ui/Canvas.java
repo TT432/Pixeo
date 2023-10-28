@@ -73,8 +73,6 @@ public class Canvas implements ProxyGuiEventListener {
         for (UIElement element : elements) {
             element.render(guiGraphics);
         }
-
-        // TODO
     }
 
     private void processAddElements() {
@@ -115,8 +113,6 @@ public class Canvas implements ProxyGuiEventListener {
         for (UIElement element : elements) {
             element.updateLayout();
         }
-
-        //TODO
     }
 
     private void updateSize() {
