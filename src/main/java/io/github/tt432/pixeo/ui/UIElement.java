@@ -6,6 +6,7 @@ import io.github.tt432.pixeo.util.ProxyGuiComponentEventListener;
 import io.github.tt432.pixeo.util.Sorts;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import org.jetbrains.annotations.NotNull;
@@ -20,10 +21,16 @@ import java.util.*;
 public final class UIElement implements ProxyGuiComponentEventListener {
     @NotNull
     @Getter
-    Canvas canvas;
+    final String name;
+    @NotNull
+    @Getter
+    final Canvas canvas;
     @Nullable
     @Getter
     UIElement parent;
+    @Setter
+    @Getter
+    int layer;
     @Getter
     List<UIElement> children = new ArrayList<>();
 
@@ -33,7 +40,7 @@ public final class UIElement implements ProxyGuiComponentEventListener {
         addChildQueue.add(child);
     }
 
-    Map<Class<?>, UIComponent> components = new HashMap<>();
+    private final Map<Class<?>, UIComponent> components = new LinkedHashMap<>();
 
     @SuppressWarnings("unchecked")
     public <T> Optional<T> getComponent(Class<T> componentClass) {
@@ -58,6 +65,10 @@ public final class UIElement implements ProxyGuiComponentEventListener {
                 .orElse(false);
     }
 
+    public boolean parentHover(double mouseX, double mouseY) {
+        return getParent() == null || getParent().hover(mouseX, mouseY);
+    }
+
     public void updateLayout() {
         for (UIComponent value : components.values()) {
             value.updateLayout();
@@ -70,16 +81,23 @@ public final class UIElement implements ProxyGuiComponentEventListener {
 
     public void processElementsModify() {
         processAddChildren();
+
+        for (UIElement child : children) {
+            child.processElementsModify();
+        }
     }
 
     private void processAddChildren() {
-        for (UIElement element : addChildQueue) {
-            children.add(element);
-            element.parent = this;
-            element.setup();
-        }
+        if (!addChildQueue.isEmpty()) {
+            for (UIElement element : addChildQueue) {
+                children.add(element);
+                element.parent = this;
+                element.setup();
+            }
 
-        addChildQueue.clear();
+            addChildQueue.clear();
+            getCanvas().updateLayers();
+        }
     }
 
     public void render(GuiGraphics guiGraphics) {

@@ -27,6 +27,8 @@ public class Sorts {
             for (var after : component.getAfter()) {
                 graph.get(after).add(component.getClass());
             }
+
+            graph.get(component.getClass()).addAll(component.getBefore());
         }
 
         // 拓扑排序

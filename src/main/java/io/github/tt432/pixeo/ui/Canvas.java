@@ -33,8 +33,16 @@ public class Canvas implements ProxyGuiEventListener {
     @Getter
     float scaleRatio;
 
+    @Getter
+    private final LayerManager layerManager = new LayerManager();
+    private ElementsSearchHandler searchHandler;
+
     public ElementsSearchHandler searcher() {
-        return new ElementsSearchHandler(elements);
+        if (searchHandler == null) {
+            searchHandler = new ElementsSearchHandler(layerManager);
+        }
+
+        return searchHandler;
     }
 
     private final List<UIElement> addElementQueue = new ArrayList<>();
@@ -81,6 +89,12 @@ public class Canvas implements ProxyGuiEventListener {
         }
         elements.addAll(addElementQueue);
         addElementQueue.clear();
+
+        updateLayers();
+    }
+
+    public void updateLayers() {
+        layerManager.updateElementLayers(elements);
     }
 
     private void processRemoveElements() {
@@ -93,6 +107,8 @@ public class Canvas implements ProxyGuiEventListener {
         }
 
         removeElementQueue.clear();
+
+        updateLayers();
     }
 
     private void processElementsModify() {

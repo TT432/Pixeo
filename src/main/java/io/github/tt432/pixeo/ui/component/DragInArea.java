@@ -6,8 +6,7 @@ package io.github.tt432.pixeo.ui.component;
 public class DragInArea extends UIComponent {
     @Override
     public boolean active() {
-        return getOwner().hover(mouseX(), mouseY())
-                || getOwner().getComponent(Draggable.class).map(Draggable::active).orElse(false);
+        return firstHover() || getOwner().getComponent(Draggable.class).map(Draggable::active).orElse(false);
     }
 
     @Override

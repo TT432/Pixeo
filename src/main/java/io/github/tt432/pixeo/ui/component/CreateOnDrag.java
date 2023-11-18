@@ -18,7 +18,7 @@ public class CreateOnDrag extends UIComponent {
 
     @Override
     public boolean active() {
-        return getOwner().hover(mouseX(), mouseY());
+        return firstHover();
     }
 
     @Override

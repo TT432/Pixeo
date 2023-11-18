@@ -8,35 +8,70 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author TT432
  */
+@Getter
 public abstract class UIComponent implements GuiEventListener {
     protected UIElement owner;
 
     /**
      * this before the list
      */
-    @Getter
     List<Class<? extends UIComponent>> before = new ArrayList<>();
+
     /**
      * this after the list
      */
-    @Getter
     List<Class<? extends UIComponent>> after = new ArrayList<>();
 
     public boolean active() {
         return true;
     }
 
-    protected double mouseX() {
+    protected final int renderLayer() {
+        return owner.getLayer() * 100;
+    }
+
+    protected final boolean parentHover() {
+        return getOwner().getParent() == null || getOwner().getParent().hover(mouseX(), mouseY());
+    }
+
+    protected final boolean firstHover() {
+        AtomicBoolean hasResult = new AtomicBoolean(false);
+        AtomicBoolean result = new AtomicBoolean(false);
+
+        double mouseX = mouseX();
+        double mouseY = mouseY();
+
+        getOwner().getCanvas().getLayerManager().forEachNegate((i, ls) -> {
+            if (hasResult.get()) {
+                return;
+            }
+
+            for (UIElement l : ls) {
+                if (l.hover(mouseX, mouseY) && l.parentHover(mouseX, mouseY)) {
+                    hasResult.set(true);
+
+                    if (l == getOwner()) {
+                        result.set(true);
+                    }
+                }
+            }
+        });
+
+        return result.get();
+    }
+
+    protected final double mouseX() {
         return Minecraft.getInstance().mouseHandler.xpos()
                 * Minecraft.getInstance().getWindow().getGuiScaledWidth()
                 / Minecraft.getInstance().getWindow().getScreenWidth();
     }
 
-    protected double mouseY() {
+    protected final double mouseY() {
         return Minecraft.getInstance().mouseHandler.ypos()
                 * Minecraft.getInstance().getWindow().getGuiScaledHeight()
                 / Minecraft.getInstance().getWindow().getScreenHeight();
@@ -72,7 +107,4 @@ public abstract class UIComponent implements GuiEventListener {
 
     }
 
-    public UIElement getOwner() {
-        return this.owner;
-    }
 }

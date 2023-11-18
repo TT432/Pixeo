@@ -1,5 +1,6 @@
 package io.github.tt432.pixeo.test;
 
+import io.github.tt432.pixeo.Pixeo;
 import io.github.tt432.pixeo.ui.Canvas;
 import io.github.tt432.pixeo.ui.PixeoScreen;
 import io.github.tt432.pixeo.ui.UIElement;
@@ -9,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -28,33 +30,40 @@ public class TestUI {
         if (GLFW.glfwGetKey(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_G) == GLFW.GLFW_PRESS) {
             Canvas canvas = new Canvas();
 
-            UIElement background = new UIElement(canvas);
-            Image bg = new Image();
-            bg.setColor(new Vector4f(0, 0, 1, 1));
-            background.addComponent(bg);
+            UIElement background = new UIElement("background", canvas);
             background.addComponent(new RectTransform(Anchor.CENTER_CENTER));
             background.addComponent(SizeCalculator.constant(new Vector2f(200, 200)));
             background.addComponent(new Clip());
-            background.addComponent(new DragTargetArea());
             canvas.addElement(background);
 
-            UIElement element = new UIElement(canvas);
+            UIElement horizontalLayout = new UIElement("horizontalLayout", canvas);
+            Image bg = new Image();
+            bg.setTexture(new ResourceLocation(Pixeo.MOD_ID, "textures/gui/test.png"));
+            bg.setColor(new Vector4f(0, 0, 1, 1));
+            horizontalLayout.addComponent(bg);
+            horizontalLayout.addComponent(new Draggable());
+            horizontalLayout.addComponent(new DragTargetArea());
+            horizontalLayout.addComponent(new RectTransform(Anchor.CENTER_CENTER));
+            horizontalLayout.addComponent(SizeCalculator.constant(new Vector2f(1000, 1000)));
+            background.addChild(horizontalLayout);
+
+            UIElement element = new UIElement("element", canvas);
             Image image = new Image();
             image.setColor(new Vector4f(1, 0, 0, 1));
             element.addComponent(image);
             element.addComponent(new RectTransform(Anchor.CENTER_CENTER));
             element.addComponent(SizeCalculator.constant(new Vector2f(40, 40)));
             element.addComponent(new Draggable());
-            background.addChild(element);
+            horizontalLayout.addChild(element);
 
-            UIElement testB = new UIElement(canvas);
+            UIElement testB = new UIElement("testB", canvas);
             testB.addComponent(new RectTransform(Anchor.RIGHT_CENTER));
             testB.addComponent(SizeCalculator.constant(50, 50));
             Image image1 = new Image();
             image1.setColor(new Vector4f(0, 1, 1, 1));
             testB.addComponent(image1);
             testB.addComponent(new CreateOnDrag(cod -> {
-                UIElement copied = new UIElement(canvas);
+                UIElement copied = new UIElement("copied", canvas);
                 canvas.addElement(copied);
                 copied.addComponent(new RectTransform(Anchor.RIGHT_CENTER));
                 copied.addComponent(SizeCalculator.constant(50, 50));

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.minecraft.client.Minecraft;
+import org.joml.Vector2f;
 import org.joml.Vector4f;
 
 /**
@@ -18,6 +19,7 @@ public class FourPoint {
     float right;
     float up;
     float down;
+    private final Vector2f center = new Vector2f();
 
     public Vector4f vec4f() {
         return new Vector4f(up, right, down, left);
@@ -44,5 +46,9 @@ public class FourPoint {
                 (float) (up * window.getGuiScale()),
                 (float) (down * window.getGuiScale())
         );
+    }
+
+    public Vector2f center() {
+        return center.set(left + (right - left) / 2, up + (down - up) / 2);
     }
 }

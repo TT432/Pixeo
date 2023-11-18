@@ -8,7 +8,7 @@ public class Draggable extends UIComponent {
 
     @Override
     public boolean active() {
-        return getOwner().hover(mouseX(), mouseY()) || dragging;
+        return firstHover() || dragging;
     }
 
     @Override

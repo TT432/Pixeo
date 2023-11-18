@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
@@ -27,13 +28,11 @@ public class RectTransform extends UIComponent {
 
     @Override
     public void updateLayout() {
-        calculateFourPoints(owner);
+        calculateFourPoints();
     }
 
-    public void calculateFourPoints(UIElement owner) {
+    public Vector2f anchorPoint(@Nullable UIElement parent) {
         Vector4f parentFourPoints;
-
-        UIElement parent = owner.getParent();
 
         if (parent == null) {
             Vector2f actualResolution = owner.getCanvas().getActualResolution();
@@ -48,29 +47,30 @@ public class RectTransform extends UIComponent {
         final float parentUp = parentFourPoints.x;
         final float parentDown = parentFourPoints.z;
 
-        var up = (switch (anchor) {
-            case LEFT_UP, CENTER_UP, RIGHT_UP -> parentUp;
-            case LEFT_CENTER, CENTER_CENTER, RIGHT_CENTER -> ((parentDown - parentUp) / 2) + parentUp;
-            case LEFT_DOWN, CENTER_DOWN, RIGHT_DOWN -> parentDown;
-        }) + offset.y - (size.y / 2);
+        return new Vector2f(
+                switch (anchor) {
+                    case LEFT_UP, LEFT_CENTER, LEFT_DOWN -> parentLeft;
+                    case CENTER_UP, CENTER_CENTER, CENTER_DOWN -> ((parentRight - parentLeft) / 2) + parentLeft;
+                    case RIGHT_UP, RIGHT_DOWN, RIGHT_CENTER -> parentRight;
+                },
+                switch (anchor) {
+                    case LEFT_UP, CENTER_UP, RIGHT_UP -> parentUp;
+                    case LEFT_CENTER, CENTER_CENTER, RIGHT_CENTER -> ((parentDown - parentUp) / 2) + parentUp;
+                    case LEFT_DOWN, CENTER_DOWN, RIGHT_DOWN -> parentDown;
+                }
+        );
+    }
 
-        var right = (switch (anchor) {
-            case LEFT_UP, LEFT_CENTER, LEFT_DOWN -> parentLeft;
-            case CENTER_UP, CENTER_CENTER, CENTER_DOWN -> ((parentRight - parentLeft) / 2) + parentLeft;
-            case RIGHT_UP, RIGHT_DOWN, RIGHT_CENTER -> parentRight;
-        }) + offset.x + (size.x / 2);
+    public void calculateFourPoints() {
+        Vector2f vector2f = anchorPoint(owner.getParent());
 
-        var down = (switch (anchor) {
-            case LEFT_UP, CENTER_UP, RIGHT_UP -> parentUp;
-            case LEFT_CENTER, CENTER_CENTER, RIGHT_CENTER -> ((parentDown - parentUp) / 2) + parentUp;
-            case LEFT_DOWN, CENTER_DOWN, RIGHT_DOWN -> parentDown;
-        }) + offset.y + (size.y / 2);
+        var up = vector2f.y + offset.y - (size.y / 2);
 
-        var left = (switch (anchor) {
-            case LEFT_UP, LEFT_CENTER, LEFT_DOWN -> parentLeft;
-            case CENTER_UP, CENTER_CENTER, CENTER_DOWN -> ((parentRight - parentLeft) / 2) + parentLeft;
-            case RIGHT_UP, RIGHT_DOWN, RIGHT_CENTER -> parentRight;
-        }) + offset.x - (size.x / 2);
+        var right = vector2f.x + offset.x + (size.x / 2);
+
+        var down = vector2f.y + offset.y + (size.y / 2);
+
+        var left = vector2f.x + offset.x - (size.x / 2);
 
         fourPoint.set(up, down, left, right);
     }
